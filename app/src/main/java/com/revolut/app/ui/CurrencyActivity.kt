@@ -49,8 +49,9 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
         currencyViewModel = ViewModelProviders.of(this, CurrencyViewModelFactory(networkRepository)).get(CurrencyViewModel::class.java)
 
         textError = findViewById(R.id.textError)
-
         recyclerView = findViewById(R.id.recyclerView)
+
+        //set recyclerview settings
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         listAdapter = CurrencyListAdapter(this, currencyViewModel.listCurrency)
@@ -65,6 +66,7 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
 
         showProgressDialog()
 
+        //make requests every second
         disposable.add(Observable.interval(1, TimeUnit.SECONDS)
             .flatMap<CurrencyResponse> { n ->
                 currencyViewModel.getCurrencyList().subscribeOn(Schedulers.io())
@@ -72,15 +74,18 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                //if success
                 hideProgressDialog()
                 textError.visibility = View.GONE
                 if (currencyViewModel.listCurrency.size > 0) {
+                    //update data if already exists
                     it.rates.map {
                         val index: Int = currencyViewModel.mapCurrencyPosition.get(it.key) as Int
                         currencyViewModel.listCurrency.get(index).value = it.value
                         listAdapter.notifyItemChanged(index)
                     }
                 } else {
+                    //add new data if not exists
                     currencyViewModel.listCurrency.add(CurrencyValue(it.base, 1.0))
                     currencyViewModel.mapCurrencyPosition.put(it.base, 0)
 
@@ -93,6 +98,7 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
                     listAdapter.notifyDataSetChanged()
                 }
             }, {
+                //if error
                 hideProgressDialog()
                 textError.visibility = View.VISIBLE
                 textError.text = it.toString()
@@ -106,6 +112,9 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
 
     override fun onClick(position: Int) {
         if (position != 0) {
+            //if click not on first item
+
+            //set new currency, update first amount and swap items
             currencyViewModel.setCurrency(position)
             currencyViewModel.setNewAmount(position)
             currencyViewModel.moveItem(position)
@@ -119,6 +128,7 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
     }
 
     override fun onChange(amount: Double) {
+        //update current amount
         currencyViewModel.amount = amount
     }
 }

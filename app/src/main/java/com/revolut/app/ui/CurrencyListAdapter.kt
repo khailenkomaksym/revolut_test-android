@@ -48,6 +48,7 @@ class CurrencyListAdapter(private val context: Context, private val listCurrency
         val title = currency.title
         val value: Double = amount * currency.value!!
 
+        //get resource image and title regards of currency code
         val resourceImageId: Int = context.resources.getIdentifier(PREFIX_IMAGE_RESOURCE + title?.toLowerCase(), "drawable", context.packageName)
         val resourceStringId: Int = context.resources.getIdentifier(PREFIX_STRING_RESOURCE + title?.toLowerCase(), "string", context.packageName)
 
@@ -55,6 +56,7 @@ class CurrencyListAdapter(private val context: Context, private val listCurrency
         holder.imageCurrency.setImageResource(resourceImageId)
         holder.textSubtitle.setText(resourceStringId)
 
+        //enable only first input field
         holder.editAmount.isEnabled = position == 0
 
         if (!holder.editAmount.isFocused) {
@@ -69,6 +71,7 @@ class CurrencyListAdapter(private val context: Context, private val listCurrency
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 if (holder.editAmount.isFocused) {
+                    //dynamically update current amount
                     if (charSequence.length > 0 && !TextUtils.isEmpty(charSequence)) {
                         amount = charSequence.toString().toDouble()
                     } else {
