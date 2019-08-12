@@ -76,6 +76,7 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
             .subscribe({
                 //if success
                 hideProgressDialog()
+                recyclerView.visibility = View.VISIBLE
                 textError.visibility = View.GONE
                 if (currencyViewModel.listCurrency.size > 0) {
                     //update data if already exists
@@ -100,6 +101,7 @@ class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChange
             }, {
                 //if error
                 hideProgressDialog()
+                recyclerView.visibility = View.GONE
                 textError.visibility = View.VISIBLE
                 textError.text = it.toString()
             }))
