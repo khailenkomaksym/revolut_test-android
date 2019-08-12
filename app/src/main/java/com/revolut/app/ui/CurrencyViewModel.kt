@@ -1,13 +1,11 @@
 package com.revolut.app.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.revolut.app.repository.NetworkRepository
 import com.revolut.app.Constants.NETWORK.Companion.BASE_CURRENCY
 import com.revolut.app.data.CurrencyResponse
 import com.revolut.app.data.CurrencyValue
+import com.revolut.app.repository.NetworkRepository
 import io.reactivex.Observable
-import kotlin.collections.ArrayList
 
 
 class CurrencyViewModel(val networkRepository: NetworkRepository) : ViewModel() {

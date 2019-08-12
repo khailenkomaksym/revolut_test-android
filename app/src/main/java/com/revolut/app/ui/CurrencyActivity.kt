@@ -2,9 +2,12 @@ package com.revolut.app.ui
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +26,7 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountChangeListener {
+class CurrencyActivity : BaseActivity(), CurrencyItemClickListener, AmountChangeListener {
 
     private val disposable = CompositeDisposable()
 
@@ -33,6 +36,7 @@ class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountC
     lateinit var networkRepository: NetworkRepository
 
     lateinit var recyclerView: RecyclerView
+    lateinit var textError: TextView
 
     lateinit var listAdapter: CurrencyListAdapter
 
@@ -44,12 +48,12 @@ class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountC
 
         currencyViewModel = ViewModelProviders.of(this, CurrencyViewModelFactory(networkRepository)).get(CurrencyViewModel::class.java)
 
+        textError = findViewById(R.id.textError)
+
         recyclerView = findViewById(R.id.recyclerView)
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
-        recyclerView.addItemDecoration(dividerItemDecoration)
-        listAdapter = CurrencyListAdapter(currencyViewModel.listCurrency)
+        listAdapter = CurrencyListAdapter(this, currencyViewModel.listCurrency)
         listAdapter.amount = currencyViewModel.amount
         listAdapter.itemClickListener = this
         listAdapter.amountChangeListener = this
@@ -59,15 +63,17 @@ class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountC
     override fun onStart() {
         super.onStart()
 
+        showProgressDialog()
+
         disposable.add(Observable.interval(1, TimeUnit.SECONDS)
             .flatMap<CurrencyResponse> { n ->
                 currencyViewModel.getCurrencyList().subscribeOn(Schedulers.io())
             }
-            .doOnSubscribe {
-            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                hideProgressDialog()
+                textError.visibility = View.GONE
                 if (currencyViewModel.listCurrency.size > 0) {
                     it.rates.map {
                         val index: Int = currencyViewModel.mapCurrencyPosition.get(it.key) as Int
@@ -75,7 +81,6 @@ class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountC
                         listAdapter.notifyItemChanged(index)
                     }
                 } else {
-                    currencyViewModel.listCurrency.clear()
                     currencyViewModel.listCurrency.add(CurrencyValue(it.base, 1.0))
                     currencyViewModel.mapCurrencyPosition.put(it.base, 0)
 
@@ -88,7 +93,9 @@ class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountC
                     listAdapter.notifyDataSetChanged()
                 }
             }, {
-
+                hideProgressDialog()
+                textError.visibility = View.VISIBLE
+                textError.text = it.toString()
             }))
     }
 
@@ -109,15 +116,6 @@ class CurrencyActivity : AppCompatActivity(), CurrencyItemClickListener, AmountC
             recyclerView.scrollToPosition(0)
             hideKeyboard()
         }
-    }
-
-    fun hideKeyboard() {
-        val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        var view = currentFocus
-        if (view == null) {
-            view = View(this)
-        }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onChange(amount: Double) {

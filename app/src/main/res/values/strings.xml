@@ -1,3 +1,39 @@
 <resources>
     <string name="app_name">Revolut</string>
+
+    <string name="currency_title_eur">Euro</string>
+    <string name="currency_title_aud">Australian Dollar</string>
+    <string name="currency_title_bgn">Bulgarian Lev</string>
+    <string name="currency_title_brl">Brazilian Real</string>
+    <string name="currency_title_cad">Canadian Dollar</string>
+    <string name="currency_title_chf">Swiss Franc</string>
+    <string name="currency_title_cny">Chinese Yuan</string>
+    <string name="currency_title_czk">Czech Koruna</string>
+    <string name="currency_title_dkk">Danish Krone</string>
+    <string name="currency_title_gbp">Pound sterling</string>
+    <string name="currency_title_hkd">Hong Kong Dollar</string>
+    <string name="currency_title_hrk">Croatian Kuna</string>
+    <string name="currency_title_huf">Hungarian Forint</string>
+    <string name="currency_title_idr">Indonesian Rupiah</string>
+    <string name="currency_title_ils">Israeli New Shekel</string>
+    <string name="currency_title_inr">Indian Rupee</string>
+    <string name="currency_title_isk">Icelandic Króna</string>
+    <string name="currency_title_jpy">Japanese Yen</string>
+    <string name="currency_title_krw">South Korean</string>
+    <string name="currency_title_mxn">Mexican Peso</string>
+    <string name="currency_title_myr">Malaysian Ringgit</string>
+    <string name="currency_title_nok">Norwegian Krone</string>
+    <string name="currency_title_nzd">New Zealand Dollar</string>
+    <string name="currency_title_php">Philippine peso</string>
+    <string name="currency_title_pln">Poland złoty</string>
+    <string name="currency_title_ron">Romanian Leu</string>
+    <string name="currency_title_rub">Russian Ruble</string>
+    <string name="currency_title_sek">Swedish Krona</string>
+    <string name="currency_title_sgd">Singapore Dollar</string>
+    <string name="currency_title_thb">Thai Baht</string>
+    <string name="currency_title_try">Turkish lira</string>
+    <string name="currency_title_usd">US Dollar</string>
+    <string name="currency_title_zar">South African Rand</string>
+    <string name="rates">Rates</string>
+    <string name="loading">Loading</string>
 </resources>
